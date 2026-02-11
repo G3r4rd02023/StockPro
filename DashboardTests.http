@@ -1,0 +1,30 @@
+### Módulo de Dashboard - Pruebas
+
+@baseUrl = https://localhost:7001
+@contentType = application/json
+
+### Variables - Login como usuario autenticado (Owner/Admin tienen acceso completo)
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@stockpro.com",
+  "password": "Password123!"
+}
+
+### Guardar token
+@authToken = {{login.response.body.token}}
+
+###############################################
+# HU-004 y HU-005: Métricas del Dashboard
+###############################################
+
+### Obtener Estadísticas del Dashboard
+# Debe retornar:
+# - Total de productos
+# - Valor total del stock
+# - Cantidad de productos con bajo stock
+# - Actividad reciente (últimos 5 movimientos)
+GET {{baseUrl}}/api/dashboard
+Authorization: Bearer {{authToken}}

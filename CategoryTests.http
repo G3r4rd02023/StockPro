@@ -1,0 +1,100 @@
+### Módulo de Categorías - Pruebas
+
+@baseUrl = https://localhost:7043
+@contentType = application/json
+
+### Variables - Necesitas un token válido (login como owner/admin primero)
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvd25lckBzdG9ja3Byby5jb20iLCJqdGkiOiIxZjY0ZjkzZS04NTU2LTRjMDAtOTUwZi00YTJhOGQ1NGVjYjgiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE3YzJhZjI4LWRkOWItNDU2Ny04MmQxLTY1NWZmYjEwMjlmMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im93bmVyQHN0b2NrcHJvLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJKdWFuIFDDqXJleiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Ik93bmVyIiwiZXhwIjoxNzcwODMxOTM0LCJpc3MiOiJTdG9ja1Byb0FQSSIsImF1ZCI6IlN0b2NrUHJvQ2xpZW50In0.gQsGpZlTTDwqBTqn4MJr_VX7jiBN0U9iJnVDoGpeTWA
+
+###############################################
+# HU-011: Crear Categorías
+###############################################
+
+### Login para obtener token (Owner)
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@stockpro.com",
+  "password": "Password123!"
+}
+
+### Guardar token
+@authToken = @token
+
+
+### Crear Categoría: Electrónica
+POST https://localhost:7043/api/categories
+Content-Type: application/json
+Authorization: Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvd25lckBzdG9ja3Byby5jb20iLCJqdGkiOiI1NjdhNGU1My0yOWY1LTQ5YmMtODVkZi05MTk2ZmYxN2U1MmEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE3YzJhZjI4LWRkOWItNDU2Ny04MmQxLTY1NWZmYjEwMjlmMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im93bmVyQHN0b2NrcHJvLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJKdWFuIFDDqXJleiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Ik93bmVyIiwiZXhwIjoxNzcwODMxNDkxLCJpc3MiOiJTdG9ja1Byb0FQSSIsImF1ZCI6IlN0b2NrUHJvQ2xpZW50In0.UDGBIBewgIy9dgmdWMww0MTYdTOKgjHCi0bDoIREm7U
+
+{
+  "name": "Electrónica",
+  "colorHex": "#3B82F6"
+}
+
+### Crear Categoría: Muebles
+POST {{baseUrl}}/api/categories
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Muebles",
+  "colorHex": "#10B981"
+}
+
+### Intentar crear duplicada (debe fallar)
+POST {{baseUrl}}/api/categories
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Electrónica",
+  "colorHex": "#EF4444"
+}
+
+### Intentar crear con color inválido (debe fallar)
+POST {{baseUrl}}/api/categories
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Ropa",
+  "colorHex": "azul"
+}
+
+###############################################
+# Listar y Obtener
+###############################################
+
+### Listar todas las categorías
+GET {{baseUrl}}/api/categories
+Authorization: Bearer {{authToken}}
+
+### Obtener categoría por ID (reemplazar ID)
+@categoryId = REEMPLAZAR_CON_ID_REAL
+GET {{baseUrl}}/api/categories/{{categoryId}}
+Authorization: Bearer {{authToken}}
+
+###############################################
+# HU-012: Editar y Eliminar
+###############################################
+
+### Actualizar Categoría
+PUT {{baseUrl}}/api/categories/{{categoryId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Electrónica Actualizada",
+  "colorHex": "#2563EB"
+}
+
+### Eliminar Categoría
+DELETE {{baseUrl}}/api/categories/{{categoryId}}
+Authorization: Bearer {{authToken}}
+
+### Verificar que se eliminó (404)
+GET {{baseUrl}}/api/categories/{{categoryId}}
+Authorization: Bearer {{authToken}}

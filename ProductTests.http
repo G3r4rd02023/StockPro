@@ -1,0 +1,88 @@
+### Módulo de Productos - Pruebas
+
+@baseUrl = https://localhost:7001
+@contentType = application/json
+@boundary = ----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+### Variables - Necesitas un token válido (login como owner/admin primero)
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@stockpro.com",
+  "password": "Password123!"
+}
+
+### Guardar token
+@authToken = {{login.response.body.data.token}}
+
+###############################################
+# HU-006: Crear Productos
+###############################################
+
+### Crear Producto con Imagen (Multipart/form-data)
+# Nota: En VS Code REST Client, enviar archivos vía multipart puede requerir sintaxis específica
+# Este es un esquema del request:
+# POST {{baseUrl}}/api/products
+# Authorization: Bearer {{authToken}}
+# Content-Type: multipart/form-data; boundary={{boundary}}
+
+# {{boundary}}
+# Content-Disposition: form-data; name="Name"
+
+# Smartphone Galaxy S23
+# {{boundary}}
+# Content-Disposition: form-data; name="SKU"
+
+# SM-G991B-DS-S23
+# {{boundary}}
+# Content-Disposition: form-data; name="CategoryId"
+
+# ID_DE_CATEGORIA_ELECTRÓNICA
+# {{boundary}}
+# Content-Disposition: form-data; name="Price"
+
+# 899.99
+# {{boundary}}
+# Content-Disposition: form-data; name="CurrentStock"
+
+# 50
+# {{boundary}}
+# Content-Disposition: form-data; name="MinStockThreshold"
+
+# 5
+# {{boundary}}--
+
+###############################################
+# HU-009 y HU-010: Búsqueda y Filtros
+###############################################
+
+### Listar todos los productos
+GET {{baseUrl}}/api/products
+Authorization: Bearer {{authToken}}
+
+### Buscar por nombre o SKU
+GET {{baseUrl}}/api/products?search=Galaxy
+Authorization: Bearer {{authToken}}
+
+### Filtrar por categoría
+GET {{baseUrl}}/api/products?categoryId=ID_DE_CATEGORIA
+Authorization: Bearer {{authToken}}
+
+### Filtrar por bajo stock
+GET {{baseUrl}}/api/products?lowStock=true
+Authorization: Bearer {{authToken}}
+
+###############################################
+# HU-007 y HU-008: Editar y Eliminar
+###############################################
+
+### Obtener producto por ID (reemplazar ID)
+@productId = REEMPLAZAR_CON_ID_REAL
+GET {{baseUrl}}/api/products/{{productId}}
+Authorization: Bearer {{authToken}}
+
+### Eliminar producto
+DELETE {{baseUrl}}/api/products/{{productId}}
+Authorization: Bearer {{authToken}}

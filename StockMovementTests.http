@@ -1,0 +1,86 @@
+### Módulo de Movimientos de Stock - Pruebas
+
+@baseUrl = https://localhost:7001
+@contentType = application/json
+
+### Variables - Login como usuario autenticado
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@stockpro.com",
+  "password": "Password123!"
+}
+
+### Guardar token
+@authToken = {{login.response.body.token}}
+
+###############################################
+# HU-013: Registrar Entradas de Stock
+###############################################
+
+### Registrar Entrada de Stock
+POST {{baseUrl}}/api/stockmovement
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "productId": "9190b75c-a9e3-4ca2-b663-9cf31b3142d2",
+  "movementType": 0,
+  "quantity": 50,
+  "reason": "Recepción de mercancía del proveedor XYZ"
+}
+
+###############################################
+# HU-014: Registrar Salidas de Stock
+###############################################
+
+### Registrar Salida de Stock
+POST {{baseUrl}}/api/stockmovement
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "productId": "REEMPLAZAR_CON_ID_DE_PRODUCTO",
+  "movementType": 1,
+  "quantity": 10,
+  "reason": "Venta al cliente - Factura #12345"
+}
+
+### Intentar Salida con Stock Insuficiente (debe fallar)
+POST {{baseUrl}}/api/stockmovement
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "productId": "REEMPLAZAR_CON_ID_DE_PRODUCTO",
+  "movementType": 1,
+  "quantity": 999999,
+  "reason": "Prueba de validación de stock insuficiente"
+}
+
+###############################################
+# HU-015: Consultar Historial de Movimientos
+###############################################
+
+### Listar todos los movimientos
+GET {{baseUrl}}/api/stockmovement
+Authorization: Bearer {{authToken}}
+
+### Filtrar por producto específico
+GET {{baseUrl}}/api/stockmovement?productId=9190b75c-a9e3-4ca2-b663-9cf31b3142d2
+Authorization: Bearer {{authToken}}
+
+### Filtrar por tipo de movimiento (0=Entry, 1=Exit)
+GET {{baseUrl}}/api/stockmovement?type=0
+Authorization: Bearer {{authToken}}
+
+### Filtrar por usuario
+GET {{baseUrl}}/api/stockmovement?userId=REEMPLAZAR_CON_ID_DE_USUARIO
+Authorization: Bearer {{authToken}}
+
+### Obtener movimiento por ID
+@movementId = REEMPLAZAR_CON_ID_REAL
+GET {{baseUrl}}/api/stockmovement/{{movementId}}
+Authorization: Bearer {{authToken}}

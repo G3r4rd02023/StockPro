@@ -1,0 +1,6 @@
+@StockPro_HostAddress = http://localhost:5295
+
+GET {{StockPro_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

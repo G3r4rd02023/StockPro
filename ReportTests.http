@@ -1,0 +1,49 @@
+### Módulo de Reportes - Pruebas
+
+@baseUrl = https://localhost:7001
+@contentType = application/json
+
+### Variables - Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@stockpro.com",
+  "password": "Password123!"
+}
+
+### Guardar token
+@authToken = {{login.response.body.token}}
+
+###############################################
+# HU-019: Reportes Visuales
+###############################################
+
+### Reporte de Inventario (JSON)
+GET {{baseUrl}}/api/report/inventory
+Authorization: Bearer {{authToken}}
+
+### Reporte de Movimientos (todos)
+GET {{baseUrl}}/api/report/movements
+Authorization: Bearer {{authToken}}
+
+### Reporte de Movimientos con rango de fecha
+GET {{baseUrl}}/api/report/movements?startDate=2026-01-01&endDate=2026-12-31
+Authorization: Bearer {{authToken}}
+
+###############################################
+# HU-020: Exportar a CSV
+###############################################
+
+### Exportar Inventario a CSV
+GET {{baseUrl}}/api/report/inventory/csv
+Authorization: Bearer {{authToken}}
+
+### Exportar Movimientos a CSV
+GET {{baseUrl}}/api/report/movements/csv
+Authorization: Bearer {{authToken}}
+
+### Exportar Movimientos a CSV con rango de fecha
+GET {{baseUrl}}/api/report/movements/csv?startDate=2026-01-01&endDate=2026-12-31
+Authorization: Bearer {{authToken}}

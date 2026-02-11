@@ -1,0 +1,42 @@
+### Módulo de Códigos QR - Pruebas
+
+@baseUrl = https://localhost:7001
+@contentType = application/json
+
+### Variables - Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@stockpro.com",
+  "password": "Password123!"
+}
+
+### Guardar token
+@authToken = {{login.response.body.token}}
+
+###############################################
+# HU-017: Generar Códigos QR
+###############################################
+
+### Generar QR como imagen PNG (descarga directa)
+@productId = REEMPLAZAR_CON_ID_DE_PRODUCTO
+GET {{baseUrl}}/api/qrcode/product/{{productId}}
+Authorization: Bearer {{authToken}}
+
+### Generar QR en Base64 (para mostrar en pantalla)
+GET {{baseUrl}}/api/qrcode/product/{{productId}}/base64
+Authorization: Bearer {{authToken}}
+
+###############################################
+# HU-018: Escanear Códigos QR
+###############################################
+
+### Buscar producto por ID (resultado de escaneo QR)
+GET {{baseUrl}}/api/qrcode/scan?productId=REEMPLAZAR_CON_ID_DE_PRODUCTO
+Authorization: Bearer {{authToken}}
+
+### Buscar producto por SKU (resultado de escaneo QR)
+GET {{baseUrl}}/api/qrcode/scan?sku=REEMPLAZAR_CON_SKU
+Authorization: Bearer {{authToken}}

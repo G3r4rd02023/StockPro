@@ -1,0 +1,46 @@
+### Módulo de Alertas - Pruebas
+
+@baseUrl = https://localhost:7001
+@contentType = application/json
+
+### Variables - Login como admin
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@stockpro.com",
+  "password": "Password123!"
+}
+
+### Guardar token
+@authToken = {{login.response.body.token}}
+
+###############################################
+# HU-016: Alertas Automáticas de Bajo Stock
+###############################################
+
+### Obtener todas las alertas
+GET {{baseUrl}}/api/alert
+Authorization: Bearer {{authToken}}
+
+### Obtener solo alertas no leídas
+GET {{baseUrl}}/api/alert?unreadOnly=true
+Authorization: Bearer {{authToken}}
+
+### Obtener conteo de alertas no leídas (para badge en sidebar)
+GET {{baseUrl}}/api/alert/unread-count
+Authorization: Bearer {{authToken}}
+
+### Ejecutar detección manual de alertas de bajo stock
+POST {{baseUrl}}/api/alert/check
+Authorization: Bearer {{authToken}}
+
+### Marcar una alerta como leída
+@alertId = REEMPLAZAR_CON_ID_REAL
+PATCH {{baseUrl}}/api/alert/{{alertId}}/read
+Authorization: Bearer {{authToken}}
+
+### Marcar todas las alertas como leídas
+PATCH {{baseUrl}}/api/alert/read-all
+Authorization: Bearer {{authToken}}

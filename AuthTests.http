@@ -1,0 +1,96 @@
+### Módulo de Autenticación - Pruebas
+
+@baseUrl = https://localhost:7001
+@contentType = application/json
+
+### Variables para almacenar el token
+@token = 
+
+###############################################
+# HU-001: Registro de Usuario
+###############################################
+
+### Registrar nuevo usuario (Owner)
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@stockpro.com",
+  "password": "Password123!",
+  "fullName": "Juan Pérez"
+}
+
+### Intentar registrar el mismo email (debe fallar)
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@stockpro.com",
+  "password": "Password456!",
+  "fullName": "Pedro Gómez"
+}
+
+### Registrar con email inválido (debe fallar)
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "invalid-email",
+  "password": "Password123!",
+  "fullName": "María López"
+}
+
+### Registrar con contraseña corta (debe fallar)
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "test@stockpro.com",
+  "password": "123",
+  "fullName": "Ana García"
+}
+
+###############################################
+# HU-002: Inicio de Sesión
+###############################################
+
+### Login con credenciales correctas
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@stockpro.com",
+  "password": "Password123!"
+}
+
+### Login con contraseña incorrecta (debe fallar)
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@stockpro.com",
+  "password": "WrongPassword"
+}
+
+### Login con email no registrado (debe fallar)
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "noexiste@stockpro.com",
+  "password": "Password123!"
+}
+
+###############################################
+# HU-003: Cierre de Sesión
+###############################################
+
+### Logout (requiere token JWT válido)
+### Primero copia el token del response de login y reemplaza en la línea de abajo
+POST {{baseUrl}}/api/auth/logout
+Content-Type: {{contentType}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvd25lckBzdG9ja3Byby5jb20iLCJqdGkiOiI3YTc3NWEwNi0zNDdkLTRjNTEtOGM0Mi1lMmYzOTRmMTBiNWQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE3YzJhZjI4LWRkOWItNDU2Ny04MmQxLTY1NWZmYjEwMjlmMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im93bmVyQHN0b2NrcHJvLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJKdWFuIFDDqXJleiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Ik93bmVyIiwiZXhwIjoxNzcwODI4NzMxLCJpc3MiOiJTdG9ja1Byb0FQSSIsImF1ZCI6IlN0b2NrUHJvQ2xpZW50In0.BcfLEpdRH5cnLCbYLK2_hsF8t_SkCSfu8_s36O5nyJU
+
+### Logout sin token (debe fallar con 401)
+POST {{baseUrl}}/api/auth/logout
+Content-Type: {{contentType}}
